@@ -14,11 +14,11 @@ const getAllProducts = async (req, res) => {
 //! Adicionar um novo produto
 
 const addProduct = async (req, res) => {
-    const { linha, cor, quantidade, valor } = req.body;
+    const { referencia, marca, cor, quantidade, valor } = req.body;
     try {
         const result = await pool.query(
-            "INSERT INTO products (linha, cor, quantidade, valor) VALUES ($1, $2, $3, $4) RETURNING *",
-            [linha, cor, quantidade, valor]
+            "INSERT INTO products ( referencia, marca, cor, quantidade, valor) VALUES ($1, $2, $3, $4,$5) RETURNING *",
+            [referencia, marca, cor, quantidade, valor]
         );
         res.status(201).json(result.rows[0]);
     } catch (error) {
@@ -29,12 +29,12 @@ const addProduct = async (req, res) => {
 
 //! Atualizar um produto existente
 const updateProduct = async (req, res) => {
-    const productId = req.params.id;
-    const { linha, cor, quantidade, valor } = req.body;
+    const { id } = req.params;
+    const { referencia, marca, cor, quantidade, valor } = req.body;
     try {
         const result = await pool.query(
-            "UPDATE products SET linha = $1, cor = $2, quantidade = $3, valor = $4 WHERE id = $5 RETURNING *",
-            [linha, cor, quantidade, valor, productId]
+            "UPDATE products SET referencia = $1, marca =$2, cor = $3, quantidade = $4, valor = $5 WHERE id = $6 RETURNING *",
+            [referencia, marca, cor, quantidade, valor, id]
         );
         res.json(result.rows[0]);
     } catch (error) {
@@ -45,9 +45,9 @@ const updateProduct = async (req, res) => {
 
 //! Excluir um produto
 const deleteProduct = async (req, res) => {
-    const productId = req.params.id;
+    const { id } = req.params;
     try {
-        await pool.query("DELETE FROM products WHERE id = $1", [productId]);
+        await pool.query("DELETE FROM products WHERE id = $1", [id]);
         res.status(204).send();
     } catch (error) {
         console.error("Erro ao excluir produto:", error);
